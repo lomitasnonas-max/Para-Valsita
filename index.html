@@ -2,352 +2,471 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0618">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Para Ñalñita 🩷</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-dot"></div>
+<!-- PANTALLA DE CARGA -->
+<div id="loader">
+  <div class="loader-heart">🩷</div>
+  <div class="loader-text">cargando...</div>
+</div>
+
+<div id="cursor-glow"></div>
+<div class="sky-body"></div>
+<div class="aurora"></div>
+<canvas id="viz-canvas"></canvas>
+<canvas id="fx-canvas"></canvas>
 <div id="bg"></div>
 <div id="grain"></div>
-<div id="ep-container" style="position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden"></div>
+<div id="particles"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 <div id="toast"></div>
 
-<!-- ═══ PANTALLA DE LOGIN ═══ -->
-<div id="login-screen">
-  <div class="login-bg">
-    <div class="star-field" id="login-stars"></div>
-  </div>
+<!-- LOGIN -->
+<div id="login">
   <div class="login-inner">
-    <div class="login-crown">🩷</div>
+    <div class="login-icon">🩷</div>
     <h1 class="login-title">Para Ñalñita</h1>
-    <p class="login-sub">¿quién eres tú?</p>
-
+    <p class="login-sub">¿quién eres?</p>
     <div class="login-cards">
-
-      <!-- Tarjeta ella -->
-      <div class="login-card" id="card-guest" onclick="selectRole('guest')">
+      <div class="login-card" onclick="selectRole('guest')">
         <div class="login-card-emoji">🌸</div>
         <div class="login-card-name">Soy Ñalñita</div>
-        <div class="login-card-hint">ver la galería</div>
+        <div class="login-card-hint">ver galería</div>
       </div>
-
-      <!-- Tarjeta creador -->
-      <div class="login-card" id="card-admin" onclick="selectRole('admin')">
+      <div class="login-card" onclick="selectRole('admin')">
         <div class="login-card-emoji">🔑</div>
         <div class="login-card-name">Soy el creador</div>
         <div class="login-card-hint">modo edición</div>
       </div>
-
     </div>
-
-    <!-- input contraseña (aparece al seleccionar) -->
-    <div class="login-pass-wrap" id="login-pass-wrap">
-      <p class="login-pass-label" id="login-pass-label">contraseña</p>
-      <input type="password" id="login-pass-input" placeholder="••••••••"
-             onkeydown="if(event.key==='Enter') confirmLogin()">
-      <p class="login-pass-err" id="login-pass-err">contraseña incorrecta 💔</p>
-      <button class="login-pass-btn" onclick="confirmLogin()">Entrar →</button>
+    <div class="login-pass" id="login-pass">
+      <input type="password" id="login-input" placeholder="contraseña"
+             onkeydown="if(event.key==='Enter') doLogin()">
+      <div class="login-err" id="login-err">contraseña incorrecta 💔</div>
+      <button class="login-btn" onclick="doLogin()">Entrar →</button>
     </div>
-
   </div>
 </div>
 
-<!-- ═══ BIENVENIDA (después del login) ═══ -->
-<div id="welcome" style="display:none">
-  <div class="wbg">
-    <div class="star-field" id="star-field"></div>
-  </div>
+<!-- BIENVENIDA -->
+<div id="welcome">
+  <div class="welcome-hearts" id="welcome-hearts"></div>
   <div class="welcome-inner">
-    <h1 class="w-para">
-      <span class="w-for">Para Ti</span>
-      <span class="w-name" id="welcome-name">Hermana Ñalñita</span>
-    </h1>
-    <p class="w-sub" id="welcome-msg">Con Cariño</p>
-
-    <div class="w-icons">
-      <span class="wi" style="animation-delay:0s">🩷</span>
-      <span class="wi" style="animation-delay:.15s">✨</span>
-      <span class="wi" style="animation-delay:.3s">🌸</span>
-      <span class="wi" style="animation-delay:.45s">🐢</span>
-      <span class="wi" style="animation-delay:.6s">🎵</span>
-      <span class="wi" style="animation-delay:.75s">🌸</span>
-      <span class="wi" style="animation-delay:.9s">✨</span>
-      <span class="wi" style="animation-delay:1.05s">🩷</span>
+    <div class="w-eyebrow">✦ especialmente para ti ✦</div>
+    <div class="w-hermana">Para Mi Hermana</div>
+    <h1 class="w-name" id="w-name">Ñalñita</h1>
+    <p class="w-tag">esto lo hice pensando en ti 🩷</p>
+    <div class="w-emojis">
+      <span>🩷</span><span>✨</span><span>🌸</span><span>⭐</span>
+      <span>🎵</span><span>🌸</span><span>✨</span><span>🩷</span>
     </div>
-
-    <button class="btn-enter" onclick="enterGallery()">
-      <span>Entrar ✨</span>
-      <span class="btn-enter-arrow">→</span>
-    </button>
+    <button class="w-btn" onclick="enterMain()">Entrar ✨</button>
   </div>
 </div>
 
-<!-- ═══ PRINCIPAL ═══ -->
+<!-- PRINCIPAL -->
 <div id="main">
-  <header class="site-header">
-    <div class="header-rule"></div>
+  <header class="header">
+    <div class="header-line"></div>
     <div class="title-wrap">
-      <span class="title-deco left">🌸</span>
-      <h1 class="site-title">Para Ñalñita</h1>
-      <span class="title-deco right">🌸</span>
+      <span class="title-deco">🌸</span>
+      <h1 class="title">Para Ñalñita</h1>
+      <span class="title-deco">🌸</span>
     </div>
-    <p class="site-sub">🎵 toca un personaje para escuchar su canción 🎵</p>
-  </header>
+    <p class="subtitle">🎵 toca un personaje para escuchar 🎵</p>
 
-  <div class="gallery-wrap" id="gallery">
-    <!-- solo admin ve este botón -->
-    <div class="add-card" id="add-card-btn" onclick="openAdd()" style="display:none">
-      <div class="add-plus">＋</div>
-      <span>Agregar</span>
+    <!-- Contador de amistad -->
+    <div class="friendship-counter">
+      <span class="fc-label">💕 nuestra amistad <button class="fc-evidence" onclick="openFechaEvidencia()" title="ver foto">📸</button></span>
+      <div class="fc-grid">
+        <div class="fc-item"><span class="fc-num" id="fc-days">0</span><span class="fc-unit">días</span></div>
+        <div class="fc-item"><span class="fc-num" id="fc-hours">0</span><span class="fc-unit">horas</span></div>
+        <div class="fc-item"><span class="fc-num" id="fc-mins">0</span><span class="fc-unit">min</span></div>
+        <div class="fc-item"><span class="fc-num" id="fc-secs">0</span><span class="fc-unit">seg</span></div>
+      </div>
     </div>
-  </div>
+
+    <!-- Cuenta regresiva fecha especial -->
+    <div class="countdown" id="countdown">
+      <span class="cd-label" id="cd-label">⏳ faltan para tu día</span>
+      <div class="cd-grid">
+        <div class="cd-item"><span class="cd-num" id="cd-days">0</span><span class="cd-unit">días</span></div>
+        <div class="cd-item"><span class="cd-num" id="cd-hours">0</span><span class="cd-unit">hrs</span></div>
+        <div class="cd-item"><span class="cd-num" id="cd-mins">0</span><span class="cd-unit">min</span></div>
+        <div class="cd-item"><span class="cd-num" id="cd-secs">0</span><span class="cd-unit">seg</span></div>
+      </div>
+    </div>
+  </header>
+  <div class="gallery" id="gallery"></div>
 </div>
 
-<!-- ═══ REPRODUCTOR ═══ -->
+<!-- REPRODUCTOR -->
 <div id="player">
-  <img id="p-img" src="" alt="">
+  <img id="p-img" alt="">
   <div id="p-info">
     <div id="p-name">—</div>
     <div id="p-song">—</div>
   </div>
   <div class="wave" id="p-wave">
-    <div class="wb"></div><div class="wb"></div><div class="wb"></div>
-    <div class="wb"></div><div class="wb"></div><div class="wb"></div>
+    <span></span><span></span><span></span><span></span><span></span>
   </div>
-  <input type="range" id="p-vol" min="0" max="1" step="0.01" value="0.75" title="Volumen">
-  <button class="pbtn" id="btn-pp" onclick="togglePlay()">⏸</button>
+  <button id="p-prev" class="p-nav" onclick="prevSong()" title="Anterior">⏮</button>
+  <button id="p-btn" onclick="togglePlay()">⏸</button>
+  <button id="p-next" class="p-nav" onclick="nextSong()" title="Siguiente">⏭</button>
+  <button id="p-list" class="p-nav" onclick="openPlaylist()" title="Lista de canciones">🎵</button>
+  <div class="player-progress" id="player-progress"></div>
 </div>
 
 <div id="lyrics-panel">
   <div class="lp-title">🎵</div>
-  <div id="lp-lines-wrap">
-    <ul id="lp-lines"></ul>
-  </div>
+  <ul id="lp-lines"></ul>
 </div>
 
-<!-- orbes de luz fondo -->
-<div class="orb" style="width:340px;height:340px;top:10%;left:5%;background:radial-gradient(circle,rgba(255,126,179,.35),transparent);animation-duration:12s;animation-delay:0s"></div>
-<div class="orb" style="width:260px;height:260px;top:55%;right:8%;background:radial-gradient(circle,rgba(217,126,245,.3),transparent);animation-duration:15s;animation-delay:-5s"></div>
-<div class="orb" style="width:200px;height:200px;bottom:15%;left:35%;background:radial-gradient(circle,rgba(168,85,247,.25),transparent);animation-duration:10s;animation-delay:-3s"></div>
-<div class="orb" style="width:180px;height:180px;top:30%;right:30%;background:radial-gradient(circle,rgba(99,102,241,.2),transparent);animation-duration:18s;animation-delay:-8s"></div>
+<!-- BOTONES FLOTANTES -->
+<button id="msg-fab" onclick="openMemModal()">💌</button>
+<button id="secret-heart" onclick="tapHeart()" title="🤫">💗</button>
+<button id="theme-toggle" onclick="toggleTheme()" title="Día / Noche">🌙</button>
+<button id="book-fab" onclick="openBook()" title="Libro de recuerdos">📖</button>
+<button id="game-fab" onclick="openGame()" title="Mini-juego">🎮</button>
+<button id="sound-toggle" onclick="toggleSound()" title="Sonido">🔊</button>
+<button id="razones-fab" onclick="openRazones()" title="Razones por las que te quiero">💖</button>
+<button id="globos-fab" onclick="openGlobos()" title="Globos sorpresa">🎈</button>
+<button id="frasco-fab" onclick="openFrasco()" title="Frasco de cumplidos">🫙</button>
+<button id="surprise-fab" onclick="surpriseMe()" title="Sorpréndeme">🎲</button>
 
-<!-- ═══ BOTÓN FLOTANTE MENSAJES ═══ -->
-<button id="msg-fab" onclick="openMemModal()" title="Mensajes para ti">
-  💌
-  <span id="msg-fab-badge"></span>
-</button>
-
-<!-- ═══ BOTÓN DEDICATORIA — tarjeta grande ═══ -->
-<div class="dedica-fab" id="fab-dedica2" onclick="openDedica(2)">
-  <div class="dedica-fab-border"></div>
-  <div class="dedica-fab-inner">
-    <img class="dedica-fab-img" id="dedica-fab-img" src="Val.png"
-         onerror="this.src='https://via.placeholder.com/160x213/1a0a2e/a855f7?text=🎵'">
-    <div class="dedica-fab-overlay"></div>
-    <div class="dedica-fab-play">▶</div>
-    <div class="dedica-fab-content">
-      <div class="dedica-fab-note">💜 para ti</div>
-      <div class="dedica-fab-song">The Messenger</div>
-      <div class="dedica-fab-artist">Linkin Park</div>
-    </div>
+<div id="dedica-fab" onclick="openDedica()">
+  <img src="Val.png" id="dedica-fab-img" onerror="this.style.display='none'">
+  <div class="dedica-fab-content">
+    <div class="dedica-fab-note">💜 para ti</div>
+    <div class="dedica-fab-song">The Messenger</div>
+    <div class="dedica-fab-artist">Linkin Park</div>
   </div>
+  <div class="dedica-fab-play">▶</div>
 </div>
 
-<!-- ═══ MODAL DEDICATORIA — The Messenger ═══ -->
-<div class="dedica-modal" id="dedica-modal-2">
-  <div class="dedica-modal-back" onclick="closeDedica(2)"></div>
-  <div class="dedica-modal-box">
-    <button class="dedica-modal-x" onclick="closeDedica(2)">✕</button>
-    <div class="dedica-modal-hdr">
-      <div class="dedica-modal-hdr-bg" id="dm2-bg"></div>
-      <div class="dedica-modal-hdr-inner">
-        <img class="dedica-modal-img" id="dm2-img" src="" alt="">
-        <div class="dedica-modal-title">Para ti</div>
-        <div class="dedica-modal-sub" style="color:rgba(99,102,241,.8)">otro recuerdo especial 💜</div>
-      </div>
-    </div>
-    <div class="dedica-modal-body">
-      <div class="dedica-player">
-        <span class="dedica-player-icon">🎵</span>
-        <div class="dedica-player-info">
-          <div class="dedica-player-song">The Messenger</div>
-          <div class="dedica-player-artist">Linkin Park</div>
-        </div>
-        <button class="dedica-play-btn" id="dm2-btn" onclick="toggleDedica(2)">▶</button>
-      </div>
-      <div class="dedica-lyrics-box" id="dm2-lyrics">
-        <div id="dm2-lines"></div>
-      </div>
-      <!-- ESCRIBE AQUÍ TU CARTA PARA EL RECUERDO 2 -->
-      <div class="dedica-carta" id="dm2-carta">
-        Hermana Ñalñita, ya son unos añitos que te conozco, y la verdad me alegra mucho tenerte en mi vida.
-Quiero decirte que te quiero y te aprecio muchísimo como amiga. Me divierto mucho jugando contigo o cuando estamos chismeando.
-Sabes que para cualquier cosa estoy aquí para ti.
-Te dedico esta canción, espero que te guste. 
-Puse esa imagen por que el cel donde tenia cuando jugabamos plato se petateo 😿
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL PERSONAJE ═══ -->
-<div id="modal">
-  <div id="modal-back" onclick="closeModal()"></div>
-  <div id="modal-back-img"></div>
-  <div id="modal-box">
-    <button id="modal-x" onclick="closeModal()">✕</button>
+<!-- MODAL PERSONAJE -->
+<div id="modal" class="modal">
+  <div class="modal-back" onclick="closeModal()"></div>
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal()">✕</button>
     <div class="modal-hdr">
       <div class="modal-hdr-bg" id="modal-hdr-bg"></div>
-      <div class="modal-hdr-overlay"></div>
       <div class="modal-hdr-inner">
-        <img id="modal-img" src="" alt="">
+        <img id="modal-img" alt="">
+        <video id="modal-video" muted loop playsinline style="display:none">
+          <source id="modal-video-src" src="" type="video/mp4">
+        </video>
         <div id="modal-name"></div>
         <div id="modal-series"></div>
       </div>
     </div>
     <div class="modal-body">
       <div class="mini-player">
-        <span class="mini-note">🎵</span>
+        <span class="mini-icon">🎵</span>
         <div class="mini-info">
-          <div class="mini-song" id="m-song"></div>
-          <div class="mini-now">reproduciendo ahora</div>
-        </div>
-        <div class="mini-wave">
-          <div class="mwb" id="mwb1"></div><div class="mwb" id="mwb2"></div>
-          <div class="mwb" id="mwb3"></div><div class="mwb" id="mwb4"></div>
+          <div id="m-song"></div>
+          <div class="mini-now">reproduciendo</div>
         </div>
       </div>
-      <div class="lyrics-box">
-        <span class="sec-lbl">🎤 letras</span>
-
-        <!-- barra admin: solo visible si isAdmin -->
-        <div class="lyrics-admin-bar" id="lyrics-admin-bar" style="display:none">
-          <input class="fetch-artist-input" id="fetch-artist"
-                 placeholder="artista (ej: Paulo Londra)">
-          <button class="btn-fetch-lyrics" id="btn-fetch" onclick="adminFetchLyrics()">
-            <span id="fetch-icon">🔍</span> Buscar letras
+      <div class="lyrics-section">
+        <div class="lyrics-header" id="lyrics-admin" style="display:none">
+          <input class="fetch-input" id="fetch-artist" placeholder="artista">
+          <button class="fetch-btn" onclick="adminFetchLyrics()">
+            <span id="fetch-ic">🔍</span> Buscar
           </button>
           <span class="fetch-status" id="fetch-status"></span>
         </div>
-
+        <div class="lyrics-label">🎤 letras</div>
         <div id="modal-lyrics"></div>
       </div>
-      <div class="dedica-wrap">
-        <div class="dedica-top">
-          <span class="dedica-ico">💌</span>
-          <div>
-            <div class="dedica-title">Mensajes para ti</div>
-            <div class="dedica-hint">escribe lo que sientas, se guarda aquí para siempre</div>
-          </div>
-        </div>
-        <div class="saved-cards" id="saved-cards"></div>
-        <textarea class="dedica-ta" id="dedica-ta" placeholder="escribe algo bonito aquí... 🌸" rows="3"></textarea>
-        <div class="dedica-footer">
-          <button class="btn-save" onclick="saveDedica()">guardar 🩷</button>
-          <span class="save-ok" id="save-ok">¡guardado! ✨</span>
-        </div>
+      <div class="msg-section">
+        <div class="msg-title">💌 Un mensaje para ti</div>
+        <div class="msg-content" id="char-msg"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ MODAL MENSAJES / RECUERDOS ═══ -->
-<div id="mem-modal">
-  <div id="mem-back" onclick="closeMemModal()"></div>
-  <div id="mem-box">
+<!-- MODAL MENSAJE GENERAL -->
+<div id="mem-modal" class="modal">
+  <div class="modal-back" onclick="closeMemModal()"></div>
+  <div class="modal-box mem-box">
+    <button class="modal-x" onclick="closeMemModal()">✕</button>
     <div class="mem-hdr">
       <span class="mem-hdr-icon">💌</span>
-      <div class="mem-hdr-info">
-        <div class="mem-hdr-title">Mensajes para ti</div>
-        <div class="mem-hdr-sub" id="mem-count">cargando...</div>
+      <div>
+        <div class="mem-hdr-title">Un mensaje especial</div>
+        <div class="mem-hdr-sub">de mi para ti 🩷</div>
       </div>
-      <button id="mem-x" onclick="closeMemModal()">✕</button>
     </div>
+    <div class="mem-body" id="mem-body"></div>
+  </div>
+</div>
 
-    <div id="mem-list"></div>
-
-    <!-- Formulario solo visible para admin -->
-    <div class="mem-form" id="mem-form" style="display:none">
-      <div class="mem-img-drop" id="mem-img-drop" onclick="document.getElementById('mem-fi').click()">
-        <div class="mem-img-placeholder" id="mem-img-placeholder">
-          <span class="mem-img-placeholder-icon">🖼</span>
-          <span class="mem-img-placeholder-text">Agregar imagen (opcional)</span>
-        </div>
+<!-- MODAL DEDICATORIA -->
+<div id="dedica-modal" class="modal">
+  <div class="modal-back" onclick="closeDedica()"></div>
+  <div class="modal-box dedica-box">
+    <button class="modal-x" onclick="closeDedica()">✕</button>
+    <div class="dedica-hdr">
+      <div class="dedica-hdr-bg" id="dedica-hdr-bg"></div>
+      <div class="dedica-hdr-inner">
+        <img id="dedica-img" src="Val.png" alt="">
+        <div class="dedica-title-txt">Para ti</div>
+        <div class="dedica-sub">un mensaje especial 💜</div>
       </div>
-      <input type="file" id="mem-fi" accept="image/*" style="display:none"
-             onchange="previewMemImg()">
-      <textarea class="mem-textarea" id="mem-text"
-                placeholder="escribe un mensaje o recuerdo para ella... 🌸" rows="3"></textarea>
-      <button class="mem-send" onclick="addMemory()">Enviar mensaje 🩷</button>
+    </div>
+    <div class="dedica-body">
+      <div class="dedica-player">
+        <span class="dedica-icon">🎵</span>
+        <div class="dedica-info">
+          <div class="dedica-song">The Messenger</div>
+          <div class="dedica-artist">Linkin Park</div>
+        </div>
+        <button class="dedica-btn" id="dedica-btn" onclick="toggleDedica()">▶</button>
+      </div>
+      <div class="dedica-lyrics" id="dedica-lyrics"></div>
+      <div class="dedica-carta" id="dedica-carta"></div>
     </div>
   </div>
 </div>
 
-<!-- ═══ MODAL AGREGAR PERSONAJE (solo admin) ═══ -->
-<div id="add-modal">
-  <div id="add-bg" onclick="closeAdd()"></div>
-  <div id="add-box">
-    <div class="fm-title">+ Nuevo Personaje</div>
-    <div class="fm-g">
-      <label class="fm-l">Nombre</label>
-      <input class="fm-i" id="fn" placeholder="Kirby, Paulo Londra...">
+<!-- MODAL CARTA SECRETA -->
+<div id="secret-modal" class="modal">
+  <div class="modal-back" onclick="closeSecret()"></div>
+  <div class="modal-box secret-box">
+    <button class="modal-x" onclick="closeSecret()">✕</button>
+    <div class="secret-envelope" id="secret-env">
+      <div class="env-flap"></div>
+      <div class="env-body">
+        <div class="env-heart">💗</div>
+        <div class="env-hint">tócame para abrir</div>
+      </div>
     </div>
-    <div class="fm-g">
-      <label class="fm-l">Serie / Artista</label>
-      <input class="fm-i" id="fseries" placeholder="Kirby's Dream Land...">
+    <div class="secret-content" id="secret-content">
+      <div class="secret-title">Solo para ti 🤫</div>
+      <div class="secret-sub">una carta especial que descubriste</div>
+      <div class="secret-letter" id="secret-letter"></div>
     </div>
-    <div class="fm-g">
-      <label class="fm-l">Categoría</label>
-      <select class="fm-i" id="fcat">
-        <option value="kirby">Kirby</option>
-        <option value="paulo">Paulo</option>
-        <option value="alondra">Alondra</option>
-        <option value="peach">🍑 Peach</option>
-        <option value="fav">⭐ Favorito</option>
-      </select>
+  </div>
+</div>
+
+<!-- MODAL LIBRO DE RECUERDOS -->
+<div id="book-modal" class="modal">
+  <div class="modal-back" onclick="closeBook()"></div>
+  <div class="modal-box book-box">
+    <button class="modal-x" onclick="closeBook()">✕</button>
+    <div class="book-hdr">
+      <span class="book-hdr-icon">📖</span>
+      <div>
+        <div class="book-hdr-title">Nuestros Recuerdos</div>
+        <div class="book-hdr-sub">momentos que guardo 🌸</div>
+      </div>
     </div>
-    <div class="fm-g">
-      <label class="fm-l">🖼 Imagen</label>
-      <div class="file-drop" id="img-drop" onclick="document.getElementById('fi').click()">
-        <div class="file-drop-preview" id="img-preview">
-          <span class="file-drop-icon">🖼</span>
-          <span class="file-drop-text">Toca para elegir imagen</span>
-          <span class="file-drop-hint">.jpg .png .webp .gif</span>
+    <div class="book-stage">
+      <div class="book-spine"></div>
+      <div class="book-pages" id="book-pages">
+        <div class="book-page front" id="book-page-front">
+          <div class="book-page-date" id="book-page-date"></div>
+          <div class="book-page-img" id="book-page-img"></div>
+          <div class="book-page-text" id="book-page-text"></div>
+          <div class="book-page-fold"></div>
+          <div class="book-page-corner" onclick="bookNext()" title="siguiente página"></div>
         </div>
       </div>
-      <input type="file" id="fi" accept="image/*" style="display:none"
-             onchange="previewFile('fi','img-preview','img-drop','image')">
     </div>
-    <div class="fm-g">
-      <label class="fm-l">🎵 Canción (mp3)</label>
-      <div class="file-drop" id="song-drop" onclick="document.getElementById('fa').click()">
-        <div class="file-drop-preview" id="song-preview">
-          <span class="file-drop-icon">🎵</span>
-          <span class="file-drop-text">Toca para elegir canción</span>
-          <span class="file-drop-hint">.mp3 .ogg .wav</span>
-        </div>
+    <div class="book-dots" id="book-dots"></div>
+    <div class="book-nav">
+      <button class="book-arrow" onclick="bookPrev()">‹</button>
+      <span class="book-counter" id="book-counter">1 / 1</span>
+      <button class="book-arrow" onclick="bookNext()">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MINI-JUEGO MEMORAMA -->
+<div id="game-modal" class="modal">
+  <div class="modal-back" onclick="closeGame()"></div>
+  <div class="modal-box game-box">
+    <button class="modal-x" onclick="closeGame()">✕</button>
+    <div class="game-hdr">
+      <span class="game-hdr-icon">🎮</span>
+      <div>
+        <div class="game-hdr-title">Memorama</div>
+        <div class="game-hdr-sub">encuentra las parejas 🩷</div>
       </div>
-      <input type="file" id="fa" accept="audio/*" style="display:none"
-             onchange="previewFile('fa','song-preview','song-drop','audio')">
     </div>
-    <div class="fm-g">
-      <label class="fm-l">Nombre de la canción</label>
-      <input class="fm-i" id="fsn" placeholder="Nena Maldición">
+    <div class="game-stats">
+      <span>Intentos: <b id="game-moves">0</b></span>
+      <span>Parejas: <b id="game-pairs">0</b>/<b id="game-total">0</b></span>
+      <button class="game-restart" onclick="startGame()">↻ Reiniciar</button>
     </div>
-    <div class="fm-g">
-      <label class="fm-l">📝 Letras sincronizadas</label>
-      <textarea class="fm-ta" id="fly" rows="5"
-        placeholder="0:00 primera línea&#10;0:05 segunda línea&#10;0:10 tercera línea"></textarea>
-      <div class="fm-hint">Formato: minuto:segundo espacio letra — ej: 0:15 te quiero mucho</div>
+    <div class="game-grid" id="game-grid"></div>
+    <div class="game-win" id="game-win">
+      <div class="game-win-icon">🏆</div>
+      <div class="game-win-title">¡Lo lograste!</div>
+      <div class="game-win-msg" id="game-win-msg"></div>
     </div>
-    <button class="fm-btn" onclick="addChar()">Agregar a la galería</button>
+  </div>
+</div>
+
+<!-- MODAL RAZONES -->
+<div id="razones-modal" class="modal">
+  <div class="modal-back" onclick="closeRazones()"></div>
+  <div class="modal-box razones-box">
+    <button class="modal-x" onclick="closeRazones()">✕</button>
+    <div class="razones-hdr">
+      <span class="razones-icon">💖</span>
+      <div>
+        <div class="razones-title">Razones por las que te quiero</div>
+        <div class="razones-sub" id="razones-counter">razón #1</div>
+      </div>
+    </div>
+    <div class="razones-body">
+      <div class="razones-text" id="razones-text">toca el botón para empezar</div>
+      <button class="razones-btn" onclick="nextRazon()">
+        <span>otra razón</span>
+        <span>→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL GLOBOS -->
+<div id="globos-modal" class="modal">
+  <div class="modal-back" onclick="closeGlobos()"></div>
+  <div class="modal-box globos-box">
+    <button class="modal-x" onclick="closeGlobos()">✕</button>
+    <div class="globos-hdr">
+      <span class="globos-icon">🎈</span>
+      <div>
+        <div class="globos-title">Revienta los globos</div>
+        <div class="globos-sub">cada uno tiene una sorpresa 🎉</div>
+      </div>
+    </div>
+    <div class="globos-stage" id="globos-stage"></div>
+    <div class="globo-message" id="globo-message"></div>
+  </div>
+</div>
+
+<!-- MODAL FRASCO DE CUMPLIDOS -->
+<div id="frasco-modal" class="modal">
+  <div class="modal-back" onclick="closeFrasco()"></div>
+  <div class="modal-box frasco-box">
+    <button class="modal-x" onclick="closeFrasco()">✕</button>
+    <div class="frasco-hdr">
+      <span class="frasco-icon">🫙</span>
+      <div>
+        <div class="frasco-title">Frasco de cumplidos</div>
+        <div class="frasco-sub">saca un papelito 💌</div>
+      </div>
+    </div>
+    <div class="frasco-stage">
+      <div class="frasco-jar" onclick="sacarCumplido()">
+        <div class="frasco-jar-emoji">🫙</div>
+        <div class="frasco-jar-hint">toca el frasco</div>
+      </div>
+      <div class="frasco-papel" id="frasco-papel">
+        <div class="frasco-papel-text" id="frasco-papel-text"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PLAYLIST -->
+<div id="playlist-modal" class="modal">
+  <div class="modal-back" onclick="closePlaylist()"></div>
+  <div class="modal-box playlist-box">
+    <button class="modal-x" onclick="closePlaylist()">✕</button>
+    <div class="playlist-hdr">
+      <span class="playlist-icon">🎧</span>
+      <div>
+        <div class="playlist-title">Lista de canciones</div>
+        <div class="playlist-sub">elige qué quieres escuchar 🌸</div>
+      </div>
+    </div>
+    <div class="playlist-tabs">
+      <button class="pl-tab active" data-tab="todas" onclick="switchPlaylistTab('todas')">🎵 Todas</button>
+      <button class="pl-tab" data-tab="favs" onclick="switchPlaylistTab('favs')">❤️ Favoritas</button>
+      <button class="pl-tab" data-tab="mia" onclick="switchPlaylistTab('mia')">⭐ Mi Lista</button>
+    </div>
+    <div class="playlist-info" id="playlist-info"></div>
+    <div class="playlist-body" id="playlist-body"></div>
+    <div class="playlist-actions" id="playlist-actions"></div>
+  </div>
+</div>
+
+<!-- MODAL EVIDENCIA FECHA AMISTAD -->
+<div id="fecha-modal" class="modal">
+  <div class="modal-back" onclick="closeFechaEvidencia()"></div>
+  <div class="modal-box fecha-box">
+    <button class="modal-x" onclick="closeFechaEvidencia()">✕</button>
+    <div class="fecha-hdr">
+      <span class="fecha-icon">📸</span>
+      <div>
+        <div class="fecha-title">Evidencia</div>
+        <div class="fecha-sub">14 de abril de 2023 — el día que empezó todo 🩷</div>
+      </div>
+    </div>
+    <div class="fecha-stage">
+      <div class="fecha-img-wrap">
+        <img id="fecha-img" src="Fecha1.jpg" alt="evidencia"
+             onerror="this.style.display='none';this.parentElement.classList.add('no-img');">
+        <div class="fecha-tape"></div>
+      </div>
+      <div class="fecha-caption">aquí empezó nuestra historia ✨</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTÓN FINAL (cierre del regalo) -->
+<button id="final-fab" onclick="openFinal()" title="Para terminar...">🩷</button>
+
+<!-- MODAL CARTA FINAL -->
+<div id="final-modal" class="modal">
+  <div class="modal-back" onclick="closeFinal()"></div>
+  <div class="modal-box final-box">
+    <button class="modal-x" onclick="closeFinal()">✕</button>
+    <div class="final-stars" id="final-stars"></div>
+    <div class="final-hdr">
+      <div class="final-ornament">✦ ✧ ✦</div>
+      <div class="final-title" id="final-title">Para terminar...</div>
+      <div class="final-ornament">✦ ✧ ✦</div>
+    </div>
+    <div class="final-body">
+      <div class="final-seal">
+        <div class="final-seal-inner">🩷</div>
+      </div>
+      <div class="final-letter" id="final-letter"></div>
+      <div class="final-signature">— con cariño 💜</div>
+    </div>
+    <div class="final-bottom">
+      <button class="final-btn" onclick="closeFinal()">Cerrar con cariño 🩷</button>
+    </div>
+  </div>
+</div>
+
+<!-- DESPEDIDA -->
+<div id="bye-screen">
+  <div class="bye-inner">
+    <div class="bye-icon">🩷</div>
+    <div class="bye-text">te espero mañana</div>
+    <div class="bye-sub">vuelve pronto, hermana 🌸</div>
   </div>
 </div>
 
 <audio id="aud"></audio>
+<audio id="dedica-aud"></audio>
+
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>

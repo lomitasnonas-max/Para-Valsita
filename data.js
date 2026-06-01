@@ -1,113 +1,368 @@
-// =====================================================
-//   data.js  —  solo tú editas este archivo
-// =====================================================
+
 
 const FRIEND_NAME = "Ñalñita";
-const WELCOME_MSG = "esto lo hice pensando en ti 🩷";
 const ADMIN_PASS  = "Paulo Londra";
 const GUEST_PASS  = "Ñalñita";
 
+// ─────────────────────────────────────────────────────
+//  FECHA DESDE QUE SE CONOCEN (formato YYYY-MM-DD)
+// ─────────────────────────────────────────────────────
+const FRIENDSHIP_START = "2023-04-14";  // 14 de abril 2023 — día que empezó nuestra amistad
+
+// ─────────────────────────────────────────────────────
+//  CUENTA REGRESIVA hacia fecha especial
+//  formato: YYYY-MM-DD  (cumpleaños, aniversario, etc)
+// ─────────────────────────────────────────────────────
+const COUNTDOWN_DATE  = "2026-09-03";   
+const COUNTDOWN_LABEL = "tu cumpleaños 🎂";  
+
+// ─────────────────────────────────────────────────────
+//  Cada vez que dé clic, sale una al azar
+// ─────────────────────────────────────────────────────
+const RAZONES = [
+  "porque siempre estás cuando te necesito",
+  "por que eres muy alegre",
+  "porque eres la hermana que la vida me regaló",
+  "porque escuchas sin juzgar",
+  "Aprecio mucho tu amistad hermana ñal",
+  "Me gusta mucha jugar contigo 😼",
+  // 👇 agrega las que quieras
+];
+
+// ─────────────────────────────────────────────────────
+//  MENSAJES EN GLOBOS (botón 🎈)
+//  Al reventar un globo sale un mensaje
+// ─────────────────────────────────────────────────────
+const GLOBO_MESSAGES = [
+  "¡sorpresa! 🎉",
+  "te quiero un montón 🩷",
+  "Wawawawawa",
+  "eres increíble ✨",
+  "gracias por existir 💜",
+  "nunca cambies 🌸",
+  "Te quiero mucho hermana Ñal",
+  "no estás sola, nunca 🤝",
+];
+
+// ─────────────────────────────────────────────────────
+//  CUMPLIDOS DEL FRASCO 🫙
+// ─────────────────────────────────────────────────────
+const CUMPLIDOS = [
+  "gracias por ser mi amiga 🩷",
+  "qué suerte tengo de tenerte cerca 🌸",
+  "eres una persona increíble, no lo dudes nunca ✨",
+  "tu amistad es de las cosas más bonitas ",
+  "me alegro mucho de haberte conocido 🌟",
+  "eres muy especial para mí, hermana Ñalñita 💗",
+  "eres pura energía buena, no cambies",
+  "ojalá nunca dejemos de ser hermanos",
+  "siempre puedes contar conmigo hermana ñal",
+  "eres de las personas más buenas que conozco",
+  "que la vida te dé todo lo que mereces, hermana ñal🌸",
+];
+
+// ─────────────────────────────────────────────────────
+//  FRASES RANDOM — aparece una al azar en bienvenida
+// ─────────────────────────────────────────────────────
+const RANDOM_PHRASES = [
+  "esto lo hice pensando en ti 🩷",
+  "porque eres mi hermana del alma 🌸",
+  "cada canción aquí es para ti ✨",
+  "tu amistad es mi regalo favorito ⭐",
+  "Que nunca te olvides de lo especial que eres",
+];
+
+// ─────────────────────────────────────────────────────
+//  MENSAJE GENERAL (botón flotante 💌)
+// ─────────────────────────────────────────────────────
+const GENERAL_MESSAGE = `
+// pon aquí tu mensaje general para ella
+`;
+
+// ─────────────────────────────────────────────────────
+//  MENSAJE DEDICATORIA (The Messenger)
+// ─────────────────────────────────────────────────────
+const DEDICA_MESSAGE = `
+Hermana Ñalñita, ya son unos añitos que te conozco, y la verdad me alegra mucho tenerte en mi vida. Quiero decirte que te quiero y te aprecio muchísimo como amiga.
+
+Me divierto mucho jugando contigo o cuando estamos chismeando. Sabes que para cualquier cosa estoy aquí para ti.
+
+Te dedico esta canción, espero que te guste.
+
+Puse esa imagen porque el cel donde tenía cuando jugábamos plato se petateó 😿
+`;
+
+// ─────────────────────────────────────────────────────
+//  CARTA SECRETA — easter egg al tocar el corazón 5 veces
+// ─────────────────────────────────────────────────────
+const SECRET_CARD = `
+// pon aquí la carta secreta más íntima
+// solo aparece al tocar el corazón 5 veces 🤫
+`;
+
+// ─────────────────────────────────────────────────────
+//  CARTA FINAL — el cierre del regalo
+//  Aparece con el botón especial al final
+// ─────────────────────────────────────────────────────
+const FINAL_LETTER_TITLE = "Para terminar...";
+const FINAL_LETTER = `
+Hermana Ñalñita,
+
+Hasta aquí llega este regalito que hice para ti.
+
+Ya te lo dije en otro mensaje, hermana ñal, pero quiero recordarte que te quiero mucho, mucho. Sabes que yo siempre he querido tener una hermana, jajsj, no se pudo, pero a ti te considero mi hermana de verdad.
+
+Eres muy linda como persona y muy auténtica en cómo eres. También me agradas mucho; eres muy enérgica y siempre hay algo que hacer contigo, hermana ñal.
+
+Y mi recuerdo favorito es cuando jugábamos Plato; ahí nos poníamos bien competitivos, JAJAJS. Aunque también me gustó mucho el mod de terror, sí me sacó unos sustos de repente. 
+
+Por último, espero que logres todo lo que te propongas, hermana ñal, y que te vaya muy bien en tus cursos. Sé que te va a ir muy bien, papoi 😼
+
+No cambies nunca, hermana ñal. De verdad, eres una persona muy cuchi y sincera, abrazos de ñoñas espero que te guste mucho el regalo.
+
+`;
+
+// ─────────────────────────────────────────────────────
+//  LIBRO DE RECUERDOS — cada página: foto + texto + fecha
+// ─────────────────────────────────────────────────────
+const MEMORIES_BOOK = [
+  {
+    img:  "Recuerdo1.jpg",
+    fecha: "Lunes, 25 de mayo de 2026",
+    text: `Con mucho lag pero me gustan las animaciones jsjs`
+  },
+  {
+    img:  "Recuerdo2.jpg",
+    fecha: "25 de mayo de 2026",
+    text: `Me encanta cuando se sientan solos JAJS`
+  },
+  {
+    img:  "Recuerdo3.jpg",
+    fecha: "18 de mayo de 2026",
+    text: `No se alcanza a ver bien pero teletransporte al warden JUAJUAS`
+  },
+  {
+    img:  "Recuerdo4.jpg",
+    fecha: "17 de mayo de 2026",
+    text: `Te van a crecer alas hermana Ñal`
+  },
+  {
+    img:  "Recuerdo5.jpg",
+    fecha: "14 de mayo de 2026",
+    text: `Sentao x2`
+  },
+  {
+    img:  "Recuerdo6.jpg",
+    fecha: "11 de mayo de 2026",
+    text: `Te transformabas Hermana Ñal`
+  },
+  {
+    img:  "Recuerdo7.jpg",
+    fecha: "11 de mayo de 2026",
+    text: `Dejame pasar xfavor 😿`
+  },
+  {
+    img:  "Sexo1.jpg",
+    text: `Estuve buscando y me encontre esto JAJAJAJS`
+  },
+  {
+    img:  "Sexo La Secuela.jpg",
+    text: `Sexo La Secuela`
+  },
+  {
+    img:  "Cumpleaños.jpg",
+    text: `Pido perdón me encantaba ese sticker`
+  },
+  {
+    img:  "Racha1.jpg",
+    text: `No tengo cuando inicio la racha pero aqui estaba chiquita todavia`
+  },
+  {
+    img:  "Racha2.jpg",
+    text: `Ya tenemos casi dos años 😼`
+  },
+];
+
+// =====================================================
+//   PERSONAJES
+// =====================================================
 const characters = [
 
-  // ══ PAULO — 4 tarjetas doradas ════════════════════
+  // ══ PAULO (doradas, salen primero) ══════════════════
   {
-    name: "Paulo 1",
-    series: "Paulo Londra",
-    img:    "Paulo1.jpg",
-    song:   "Paulo Londra ft Lenny Tavarez - Nena Maldicion.mp3",
+    name: "Paulo 1", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo1.jpg",
+    song: "Paulo Londra ft Lenny Tavarez - Nena Maldicion.mp3",
     songName: "Nena Maldición (feat. Lenny Tavárez)",
-    cat: "paulo", lyrics: []
+    mensaje: `Al final me das calificación de elección de canciones que no conozco mucho de estas pipipi`
   },
   {
-    name: "Paulo 2",
-    series: "Paulo Londra",
-    img:    "Paulo2.jpg",
-    song:   "Paulo Londra - Adan y Eva.mp3",
+    name: "Paulo 2", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo2.jpg",
+    song: "Paulo Londra - Adan y Eva.mp3",
     songName: "Adán y Eva",
-    cat: "paulo", lyrics: []
+    mensaje: `Ahí esta tu novio espero que ya en el juego se hicieran novios jijijij`
   },
   {
-    name: "Paulo 3",
-    series: "Paulo Londra",
-    img:    "Paulo3.webp",
-    song:   "Paulo Londra - Me Tiene Mal.mp3",
+    name: "Paulo 3", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo3.webp",
+    song: "Paulo Londra - Me Tiene Mal.mp3",
     songName: "Me Tiene Mal",
-    cat: "paulo", lyrics: []
+    mensaje: `Hermana Ñalñita me gusta jugar contigo plato aunque a veces me humilles 😼`
   },
   {
-    name: "Paulo 4",
-    series: "Paulo Londra",
-    img:    "Paulo4.png",
-    song:   "Paulo Londra - Chica Paranormal.mp3",
+    name: "Paulo 4", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo4.png",
+    song: "Paulo Londra - Chica Paranormal.mp3",
     songName: "Chica Paranormal",
-    cat: "paulo", lyrics: []
+    mensaje: `Hay que jugar roblox de nuevo para molestar a María la verdad ni me acuerdo como se llama JAJAS`
+  },
+  {
+    name: "Paulo 5", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo5.jpg",
+    song: "Paulo Londra Tal Vez.mp3",
+    songName: "Tal Vez",
+    mensaje: `aquí te dejo otra de Paulo`
+  },
+  {
+    name: "Paulo 6", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo6.jpg",
+    song: "Paulo Londra Por Eso Vine.mp3",
+    songName: "Por Eso Vine",
+    mensaje: ``
+  },
+  {
+    name: "Paulo 7", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo7.jpg",
+    song: "Paulo Londra Forever Alone.mp3",
+    songName: "Forever Alone",
+    mensaje: `una más de Paulo porque sé que te gusta mucho`
+  },
+  {
+    name: "Paulo 8", series: "Paulo Londra", cat: "paulo",
+    img:  "Paulo8.jpg",
+    song: "Paulo Londra No Puedo.mp3",
+    songName: "No Puedo",
+    mensaje: `ya casi se nos acaba el repertorio aaaaaaaaaaaaa`
   },
 
-  // ══ KIRBY ═════════════════════════════════════════
+  // ══ KIRBY ═══════════════════════════════════════════
   {
-    name: "Kirby",
-    series: "BIGBANG",
-    img:    "kirby (1).png",
-    song:   "BIGBANG - FANTASTIC BABY MV.mp3",
+    name: "Kirby", series: "BIGBANG", cat: "kirby",
+    img:  "kirby (1).png",
+    song: "BIGBANG - FANTASTIC BABY MV.mp3",
     songName: "FANTASTIC BABY",
-    cat: "kirby", lyrics: []
+    mensaje: `Uno de los muchos kirbys que tienes luego me dices si te compras el gigante`
   },
   {
-    name: "Kirby 2",
-    series: "HUMBE",
-    img:    "Krby1.png",
-    song:   "HUMBE - ESENCIA.mp3",
+    name: "Kirby 2", series: "HUMBE", cat: "kirby",
+    img:  "Krby1.png",
+    song: "HUMBE - ESENCIA.mp3",
     songName: "ESENCIA",
-    cat: "kirby", lyrics: []
+    mensaje: `Ese kirby seria canon si viviera de donde eres`
+  },
+  {
+    name: "Kirby 3", series: "HUMBE", cat: "kirby",
+    img:  "Kirby2.jpg",
+    song: "HUMBE Te Lo Prometo.mp3",
+    songName: "Te Lo Prometo",
+    mensaje: `otro Kirby para tu colección, hermana Ñal `
+  },
+  {
+    name: "Kirby 4", series: "HUMBE", cat: "kirby",
+    img:  "Kirby3.jpg",
+    song: "Humbe Amor de Cine.mp3",
+    songName: "Amor de Cine",
+    mensaje: `el último Kirby por ahora 🐢`
   },
 
-  // ══ PEACH ═════════════════════════════════════════
+  // ══ PEACH ═══════════════════════════════════════════
   {
-    name: "Peach",
-    series: "Grupo Frontera",
-    img:    "Peach.png",
-    song:   "Grupo Frontera, Manuel Turizo  - La Del Proceso.mp3",
+    name: "Peach", series: "Grupo Frontera", cat: "peach",
+    img:  "Peach.png",
+    song: "Grupo Frontera, Manuel Turizo  - La Del Proceso.mp3",
     songName: "La Del Proceso",
-    cat: "peach", lyrics: []
+    mensaje: `Ayuda se me acaba el presupuesto 🐱`
   },
   {
-    name: "Peach 2",
-    series: "Emmanuel Cortés",
-    img:    "Peach2.png",
-    song:   "Emmanuel Cortes- Amor.mp3",
+    name: "Peach 2", series: "Emmanuel Cortés", cat: "peach",
+    img:  "Peach2.png",
+    song: "Emmanuel Cortes- Amor.mp3",
     songName: "Amor",
-    cat: "peach", lyrics: []
+    mensaje: `Echese un grito viejillo
+Bueno y te quería decir que aprecio tu amistad y te tengo mucha confianza tqm hermana ñalñita`
+  },
+  {
+    name: "Peach 3", series: "Lady Gaga", cat: "peach",
+    img:  "Peach3.png",
+    song: "Lady Gaga Bad Romance.mp3",
+    songName: "Bad Romance",
+    mensaje: `Ya tengo presupuesto otra vez 😼`
+  },
+  {
+    name: "Daisy", series: "Edén Muñoz", cat: "peach",
+    img:  "Daisy.png",
+    song: "Corridos Onichan COQUETA.mp3",
+    songName: "Coqueta",
+    mensaje: `Encontre otro corrido oni-chan JAJS`
+  },
+  {
+    name: "Daisy 2", series: "Tinker Bell", cat: "peach",
+    img:  "Daisy2.jpg",
+    song: "La Separación.mp3",
+    songName: "La Separación",
+    mensaje: `Esta canción me gustaba mi prima hacia que viera esas pelis`
   },
 
-  // ══ RESTO ═════════════════════════════════════════
+  // ══ OTROS ═══════════════════════════════════════════
   {
-    name: "Papoi",
-    series: "HUMBE",
-    img:    "Bob.png",
-    song:   "HUMBE - bien hecho.mp3",
+    name: "Personaje 1", series: "HUMBE", cat: "otro",
+    img:  "Bob.png",
+    song: "HUMBE - bien hecho.mp3",
     songName: "bien hecho",
-    cat: "otro", lyrics: []
+    mensaje: `Vamos Cerrando el Papoi`
   },
   {
-    name: "Bob",
-    series: "Corridos Oni-chan",
-    img:    "Bob2.png",
-    song:   "Amor - Corridos Oni-chan.mp3",
+    name: "Personaje 2", series: "Corridos Oni-chan", cat: "otro",
+    img:  "Bob2.png",
+    song: "Amor - Corridos Oni-chan.mp3",
     songName: "Amor",
-    cat: "otro", lyrics: []
+    mensaje: `Me encontré la versión de los corridos-onichan JAJAJS aunque ni idea si sea corrido`
   },
-
-  /*
-  ➕ COPIA ESTE BLOQUE PARA AGREGAR MÁS:
   {
-    name: "NOMBRE",
-    series: "ARTISTA",
-    img:    "ARCHIVO.png",
-    song:   "ARCHIVO.mp3",
-    songName: "NOMBRE CANCIÓN",
-    cat: "paulo",   // paulo | kirby | peach | otro | fav
-    lyrics: []
+    name: "Bob Esponja", series: "David Glen Eisley", cat: "otro",
+    img:  "Bob Esponja.jpg",
+    song: "Sweet Victory David Glen Eisley.mp3",
+    songName: "Sweet Victory",
+    mensaje: `Temazo hermana ñal`
   },
-  */
+  {
+    name: "Bob Esponja 2", series: "Bob Esponja", cat: "otro",
+    img:  "Bob Esponja2.jpg",
+    song: "Bob Esponja Soy un Cacahuate.mp3",
+    songName: "Soy un Cacahuate",
+    mensaje: `Bob siempre sacando una sonrisa, igual que tú 💛`
+  },
+  {
+    name: "Patricio", series: "Bob Esponja", cat: "otro",
+    img:  "Patricio.png",
+    song: "Brilla, brilla Patricio Estrella.mp3",
+    songName: "Brilla, brilla Patricio Estrella",
+    mensaje: `Esta mata timpanos w`
+  },
+  {
+    name: "El Chavo", series: "Ricky Montgomery", cat: "otro",
+    img:  "Chavo Colgado.jpg",
+    song: "Mr loverman Ricky Montgomery.mp3",
+    songName: "Mr Loverman",
+    mensaje: `Yo en corto cuando me hacen comer huevo`
+  },
+  {
+    name: "Perry", series: "Phineas y Ferb", cat: "otro",
+    img:  "Perry.png",
+    song: "Serendipity - 2Young.mp3",
+    songName: "Serendipity",
+    mensaje: `Se ve bien cuchi el perry pero como tontillo`
+  },
 
 ];
