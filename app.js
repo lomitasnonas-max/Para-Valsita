@@ -1053,7 +1053,7 @@ function winGame() {
   spawnConfetti(80);
   if (typeof spawnHeartConfetti === 'function') spawnHeartConfetti(30);
   $('game-grid').style.display = 'none';
-  $('game-win-msg').textContent = `Lo lograste en ${gameMoves} intentos 🩷 igual que encontraste a un gran amigo... a mí 🌸`;
+  $('game-win-msg').textContent = `Te quiero mucho Hermana Ñalñita 🩷`;
   $('game-win').classList.add('show');
 }
 
