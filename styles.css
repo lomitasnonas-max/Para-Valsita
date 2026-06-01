@@ -5392,3 +5392,85 @@ body.is-playing #cursor-glow { animation: none !important; }
 @media (max-width: 680px) {
   .game-card-img { border-radius: 6px !important; }
 }
+
+/* ════════════════════════════════════════════════════
+   FIX MOBILE v3 DEFINITIVO: Memorama sin 3D, solo opacity
+   El flip 3D no funciona bien en muchos Android
+════════════════════════════════════════════════════ */
+
+/* Sin transform 3D — usar opacity simple */
+.game-card {
+  transform: none !important;
+  transform-style: flat !important;
+  position: relative;
+}
+
+.game-card-face {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+  backface-visibility: visible !important;
+  -webkit-backface-visibility: visible !important;
+  opacity: 1;
+  transition: opacity .35s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Estado inicial: back visible, front oculto */
+.game-card-back {
+  opacity: 1;
+  z-index: 2;
+}
+.game-card-front {
+  opacity: 0;
+  z-index: 1;
+}
+
+/* Cuando está flipped o matched: SOLO front visible */
+.game-card.flipped .game-card-back,
+.game-card.matched .game-card-back {
+  opacity: 0 !important;
+  z-index: 1 !important;
+}
+.game-card.flipped .game-card-front,
+.game-card.matched .game-card-front {
+  opacity: 1 !important;
+  z-index: 2 !important;
+}
+
+/* Quitar rotateY de la animación matched que estaba en otro bloque */
+.game-card.matched {
+  animation: matchedSimple .5s ease;
+}
+@keyframes matchedSimple {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.1); }
+}
+
+/* Imagen del personaje */
+.game-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  border-radius: 10px !important;
+}
+
+/* Estilos del lado front */
+.game-card-front {
+  background: rgba(255,255,255,.05);
+  border: 2px solid rgba(255,126,179,.4);
+  padding: 0 !important;
+}
+
+.game-card.matched .game-card-front {
+  border-color: var(--gold);
+  background: rgba(245,200,66,.15);
+}
