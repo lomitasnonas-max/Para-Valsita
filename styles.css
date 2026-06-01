@@ -5293,3 +5293,51 @@ body.is-playing #cursor-glow { animation: none !important; }
 .card img, .pl-item-img, .globo-img, #modal-img, #p-img {
   display: block;
 }
+
+/* ════════════════════════════════════════════════════
+   FIX MOBILE: Memorama tarjetas cuadradas siempre
+════════════════════════════════════════════════════ */
+.game-card {
+  aspect-ratio: 1 / 1 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  contain: layout paint !important; /* sin "style" para no romper aspect-ratio */
+}
+.game-card-face {
+  position: absolute !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
+}
+
+/* Fix imagen dentro de la carta */
+.game-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+  display: block !important;
+}
+
+/* Mejor visibilidad números del marcador */
+.game-stats {
+  color: rgba(255,255,255,.95) !important;
+}
+.game-stats b {
+  color: var(--rose2) !important;
+}
+
+@media (max-width: 680px) {
+  .game-grid {
+    gap: .55rem !important;
+    padding: .6rem 1rem 1rem !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .game-card {
+    /* Forzar cuadradas usando padding-bottom como respaldo */
+    aspect-ratio: 1 / 1 !important;
+  }
+  /* En móvil, si aspect-ratio no funciona, usar height fija */
+  @supports not (aspect-ratio: 1) {
+    .game-card { height: 70px; }
+  }
+}
