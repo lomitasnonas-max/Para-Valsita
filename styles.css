@@ -5341,3 +5341,54 @@ body.is-playing #cursor-glow { animation: none !important; }
     .game-card { height: 70px; }
   }
 }
+
+/* ════════════════════════════════════════════════════
+   FIX MOBILE v2: Imágenes del memorama bien visibles
+════════════════════════════════════════════════════ */
+.game-card-front {
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: rgba(255,255,255,.05) !important;
+  border: 2px solid rgba(255,126,179,.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.game-card-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  display: block !important;
+  /* Forzar visible aunque haya transforms en el padre */
+  opacity: 1 !important;
+  visibility: visible !important;
+  /* Anti-rendering bug en algunos Android: */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Asegurar que cuando esté flipped (volteada) sea visible */
+.game-card.flipped .game-card-front,
+.game-card.matched .game-card-front {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Asegurar que el back NO se vea cuando está volteada */
+.game-card.flipped .game-card-back,
+.game-card.matched .game-card-back {
+  visibility: hidden !important;
+}
+
+/* Si por algún motivo no hay imagen, mostrar el emoji */
+.game-card-front span {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.5));
+}
+
+@media (max-width: 680px) {
+  .game-card-img { border-radius: 6px !important; }
+}
