@@ -39,8 +39,16 @@ function doLogin() {
   }
   isAdmin = loginRole === 'admin';
   $('login').classList.add('out');
+  const h = new Date().getHours();
+  let saludo = 'esto lo hice pensando en ti 🩷';
+  if (h >= 5  && h < 12) saludo = 'buenos días Ñalñita ☀️';
+  else if (h >= 12 && h < 19) saludo = 'buenas tardes Ñalñita 🌸';
+  else if (h >= 19 && h < 23) saludo = 'buenas noches Ñalñita 🌙';
+  else saludo = '¿qué haces despierta? ve a descansar 💤';
   setTimeout(() => {
     $('login').style.display = 'none';
+    const tagEl = document.querySelector('.w-tag');
+    if (tagEl) tagEl.textContent = saludo;
     $('welcome').classList.add('show');
   }, 700);
 }
@@ -56,6 +64,7 @@ function enterMain() {
     setTimeout(() => $('msg-fab').classList.add('on'), 300);
     setTimeout(() => $('dedica-fab').classList.add('on'), 500);
     setTimeout(() => { const ff = $('final-fab'); if (ff) ff.classList.add('on'); }, 1200);
+    setTimeout(() => { const pl = $('playlist-fab-card'); if (pl) pl.classList.add('on'); }, 700);
   }, 800);
 }
 
@@ -873,13 +882,18 @@ function renderBookPage(direction) {
   const txtEl = $('book-page-text');
   const dateEl = $('book-page-date');
 
-  // imagen
+  // imagen con zoom al tocar
   imgEl.classList.remove('has-img');
   imgEl.style.backgroundImage = '';
+
+  imgEl.onclick = null;
   const testImg = new Image();
   testImg.onload = () => {
     imgEl.style.backgroundImage = `url("${page.img}")`;
     imgEl.classList.add('has-img');
+
+
+
   };
   testImg.src = page.img;
 
@@ -2424,3 +2438,461 @@ document.addEventListener('visibilitychange', () => {
 // ════════════════════════════════════════════════════════════════════
 // (El tilt 3D del modal y el shine dinámico de cards se quitan para
 //  no recalcular layout en cada movimiento del mouse)
+
+// ════════════════════════════════════════════════════
+//   CARTAS DEDICATORIAS DERECHA
+// ════════════════════════════════════════════════════
+const dedica2Aud = $('dedica2-aud');
+const dedica3Aud = $('dedica3-aud');
+if (dedica2Aud) dedica2Aud.volume = .85;
+if (dedica3Aud) dedica3Aud.volume = .85;
+let d2Timer = null, d3Timer = null;
+
+// Letras en inglés sincronizadas
+const D2_LYRICS = [
+  {t:0,l:""},
+  {t:27,l:"Should've stayed, were there signs, I ignored?"},
+  {t:32,l:"Can I help you, not to hurt, anymore?"},
+  {t:37,l:"We saw brilliance, when the world, was asleep"},
+  {t:42,l:"There are things that we can have, but can't keep"},
+  {t:47,l:""},
+  {t:49,l:"If they say"},
+  {t:52,l:"Who cares if one more light goes out?"},
+  {t:57,l:"In a sky of a million stars"},
+  {t:61,l:"It flickers, flickers"},
+  {t:63,l:"Who cares when someone's time runs out?"},
+  {t:68,l:"If a moment is all we are"},
+  {t:72,l:"We're quicker, quicker"},
+  {t:74,l:"Who cares if one more light goes out?"},
+  {t:78,l:"Well I do"},
+  {t:80,l:""},
+  {t:82,l:"The reminders pull the floor from your feet"},
+  {t:87,l:"In the kitchen one more chair than you need"},
+  {t:92,l:"Oh, and you're angry, and you should be"},
+  {t:96,l:"It's not fair"},
+  {t:98,l:""},
+  {t:100,l:"Just 'cause you can't see it"},
+  {t:104,l:"Doesn't mean it, isn't there"},
+  {t:107,l:""},
+  {t:109,l:"Who cares if one more light goes out?"},
+  {t:114,l:"In a sky of a million stars"},
+  {t:118,l:"It flickers, flickers"},
+  {t:120,l:"Who cares when someone's time runs out?"},
+  {t:125,l:"If a moment is all we are"},
+  {t:129,l:"We're quicker, quicker"},
+  {t:131,l:"Who cares if one more light goes out?"},
+  {t:135,l:"Well I do"},
+  {t:137,l:""},
+  {t:140,l:"Yo, I was in the waiting room"},
+  {t:143,l:"Before I knew, that's where I'd be"},
+  {t:146,l:"Midnight, talking to the moon"},
+  {t:149,l:"But who was listening?"},
+  {t:151,l:""},
+  {t:153,l:"Pulling out our hair, it's hard enough"},
+  {t:156,l:"To put up such a guard against each other"},
+  {t:160,l:"When we're caught up in a wave"},
+  {t:163,l:"Out in the midst of the ocean"},
+  {t:166,l:"Miles away from where we started"},
+  {t:169,l:"Back before we were broken"},
+  {t:171,l:""},
+  {t:173,l:"Before I knew life took turns"},
+  {t:176,l:"Was somebody's son, somebody's daughter"},
+  {t:179,l:"Left alone in the dark, scared of being forgotten"},
+  {t:183,l:""},
+  {t:185,l:"Who cares if one more light goes out?"},
+  {t:190,l:"In a sky of a million stars"},
+  {t:194,l:"It flickers, flickers"},
+  {t:196,l:"Who cares when someone's time runs out?"},
+  {t:201,l:"If a moment is all we are"},
+  {t:205,l:"We're quicker, quicker"},
+  {t:207,l:"Who cares if one more light goes out?"},
+  {t:211,l:"Well I do"},
+  {t:213,l:"I do"},
+  {t:216,l:""},
+  {t:219,l:"Who cares if one more light goes out?"},
+  {t:224,l:"In a sky of a million stars"},
+  {t:228,l:"It flickers, flickers"},
+  {t:230,l:"Who cares when someone's time runs out?"},
+  {t:235,l:"If a moment is all we are"},
+  {t:239,l:"We're quicker, quicker"},
+  {t:241,l:"Who cares if one more light goes out?"},
+  {t:245,l:"Well I do"},
+  {t:247,l:"I do 🧡"}
+];
+
+// Always With Me — English, empieza desde el inicio
+const D3_LYRICS = [
+  {t:4,l:""},{t:9,l:"Somewhere, a voice calls in the depths of my heart"},
+  {t:15,l:"May I always be dreaming"},
+  {t:20,l:"The dreams that move my heart"},{t:25,l:""},
+  {t:27,l:"Faraway, the echoes of a farewell resound"},
+  {t:33,l:"Through the years, distance fades"},
+  {t:38,l:"Your voice still reaches me"},{t:42,l:""},
+  {t:44,l:"Always, always with me"},
+  {t:48,l:"Always, always with me"},{t:52,l:""},
+  {t:54,l:"Across the years, across the miles"},
+  {t:59,l:"Two hearts, one dream"},
+  {t:63,l:"Nothing can tear us apart"},{t:67,l:""},
+  {t:69,l:"In the water, clear reflections of the sky"},
+  {t:75,l:"In the mirror, your gentle smile"},
+  {t:80,l:"Looking back at me"},{t:84,l:""},
+  {t:86,l:"Always, always with me"},
+  {t:90,l:"Always, always with me"},{t:94,l:""},
+  {t:96,l:"I close my eyes and I can see"},
+  {t:101,l:"Your face so dear to me"},
+  {t:105,l:"I know you're always there"},{t:109,l:""},
+  {t:112,l:"Always, always with me"},
+  {t:116,l:"Always, always with me"},{t:120,l:""},
+  {t:122,l:"Somewhere, that voice calls"},
+  {t:127,l:"Across the years"},
+  {t:131,l:"Always with me 🌸"}
+];
+
+// Mostrar cartas cuando entre al main
+(function() {
+  const obs = new MutationObserver(() => {
+    const main = $('main');
+    if (main && main.classList.contains('show')) {
+      obs.disconnect();
+      setTimeout(() => {
+        const f2 = $('dedica2-fab'); if (f2) f2.classList.add('on');
+        const f3 = $('dedica3-fab'); if (f3) f3.classList.add('on');
+      }, 1000);
+    }
+  });
+  const main = $('main');
+  if (main) obs.observe(main, { attributes: true, attributeFilter: ['class'] });
+})();
+
+function renderDLyrics(data, el, cls) {
+  if (!el || !data) return;
+  el.innerHTML = data.map((l,i) =>
+    `<span class="${cls}" data-i="${i}">${l.l||'♪'}</span>`
+  ).join('');
+}
+function startDSync(aud, data, el, cls, ref) {
+  if (ref.v) { clearInterval(ref.v); ref.v=null; }
+  if (!data||!aud||!el) return;
+  ref.v = setInterval(() => {
+    if (aud.paused) return;
+    const ct = aud.currentTime;
+    let active = 0;
+    for (let i=0;i<data.length;i++) if(data[i].t<=ct) active=i;
+    const lines = el.querySelectorAll('.'+cls);
+    lines.forEach((l,i) => l.classList.toggle('active', i===active));
+    if (lines[active]) lines[active].scrollIntoView({behavior:'smooth',block:'center'});
+  }, 300);
+}
+function fadInAud(aud) {
+  aud.volume=0; aud.play().catch(()=>{});
+  let v=0;
+  const fi=setInterval(()=>{ v=Math.min(v+0.06,.85); aud.volume=v; if(v>=.85)clearInterval(fi); },80);
+}
+function fadOutAud(aud, cb) {
+  let v=aud.volume;
+  const fo=setInterval(()=>{ v=Math.max(v-0.07,0); aud.volume=v; if(v<=0){clearInterval(fo);aud.pause();if(cb)cb();} },50);
+}
+
+// ── One More Light ───────────────────────────────
+async function openDedica2() {
+  const modal = $('dedica2-modal'); if(!modal) return;
+  modal.classList.add('on'); document.body.style.overflow='hidden';
+  const lyricsEl = $('dedica2-lyrics');
+  if(lyricsEl) lyricsEl.innerHTML='<span style="color:var(--muted);font-size:.8rem">buscando letra...</span>';
+
+  const whyEl=$('dedica2-why'), whyTxt=$('dedica2-why-text');
+  if(whyEl&&whyTxt&&typeof DEDICA2_WHY!=='undefined'){
+    const raw=DEDICA2_WHY.trim();
+    const lines=raw.split('\n').filter(l=>l.trim()&&!l.trim().startsWith('//'));
+    if(lines.length){ whyTxt.textContent=lines.join(' '); whyEl.classList.add('show'); }
+  }
+  const cartaEl=$('dedica2-carta');
+  if(cartaEl&&typeof DEDICA2_MESSAGE!=='undefined'){
+    const raw=DEDICA2_MESSAGE.trim();
+    const lines=raw.split('\n').filter(l=>l.trim()&&!l.trim().startsWith('//'));
+    if(lines.length){ cartaEl.textContent=lines.join('\n'); cartaEl.classList.add('show'); }
+  }
+
+  if(dedica2Aud&&typeof DEDICA2_SONG!=='undefined'&&DEDICA2_SONG){
+    dedica2Aud.src=DEDICA2_SONG; fadInAud(dedica2Aud);
+    $('dedica2-btn').textContent='⏸'; $('dedica2-now').textContent='reproduciendo';
+    const disc=$('dedica2-disc'); if(disc) disc.classList.add('spinning');
+  }
+
+  let data=null;
+  try {
+    const cache=JSON.parse(localStorage.getItem('nd-lyrics-dedica')||'{}');
+    if(cache['oml']){ data=cache['oml']; }
+    else {
+      data=await fetchLyrics('One More Light','Linkin Park');
+      if(data){ cache['oml']=data; localStorage.setItem('nd-lyrics-dedica',JSON.stringify(cache)); }
+    }
+  } catch(e){}
+
+  if(data&&data.length&&lyricsEl){
+    renderDLyrics(data,lyricsEl,'d2-line');
+    const ref={v:null}; d2Timer=ref;
+    startDSync(dedica2Aud,data,lyricsEl,'d2-line',ref);
+  } else if(lyricsEl){
+    lyricsEl.innerHTML='<span style="color:var(--muted);font-size:.8rem">letra no encontrada</span>';
+  }
+  if(typeof playSparkle==='function') playSparkle();
+}
+function closeDedica2() {
+  const modal=$('dedica2-modal'); if(!modal) return;
+  modal.classList.remove('on'); document.body.style.overflow='';
+  if(dedica2Aud) fadOutAud(dedica2Aud);
+  if(d2Timer){clearInterval(d2Timer.v);d2Timer=null;}
+  const disc=$('dedica2-disc'); if(disc) disc.classList.remove('spinning');
+  $('dedica2-btn').textContent='▶'; $('dedica2-now').textContent='toca ▶ para escuchar';
+}
+function toggleDedica2() {
+  if(!dedica2Aud) return;
+  const disc=$('dedica2-disc'),btn=$('dedica2-btn'),now=$('dedica2-now');
+  if(dedica2Aud.paused){
+    dedica2Aud.play().catch(()=>{});
+    if(disc) disc.classList.add('spinning');
+    if(btn) btn.textContent='⏸'; if(now) now.textContent='reproduciendo';
+    const ref={v:null}; d2Timer=ref;
+    startDSync(dedica2Aud,null,$('dedica2-lyrics'),'d2-line',ref);
+  } else {
+    dedica2Aud.pause();
+    if(disc) disc.classList.remove('spinning');
+    if(btn) btn.textContent='▶'; if(now) now.textContent='pausado';
+    if(d2Timer){clearInterval(d2Timer.v);}
+  }
+}
+
+// ── Always With Me ───────────────────────────────
+async function openDedica3() {
+  const modal=$('dedica3-modal'); if(!modal) return;
+  modal.classList.add('on'); document.body.style.overflow='hidden';
+  const lyricsEl=$('dedica3-lyrics');
+  if(lyricsEl) lyricsEl.innerHTML='<span style="color:var(--muted);font-size:.8rem">buscando letra...</span>';
+
+  const cartaEl=$('dedica3-carta');
+  if(cartaEl&&typeof DEDICA3_MESSAGE!=='undefined'){
+    const raw=DEDICA3_MESSAGE.trim();
+    const lines=raw.split('\n').filter(l=>l.trim()&&!l.trim().startsWith('//'));
+    if(lines.length){ cartaEl.textContent=lines.join('\n'); cartaEl.classList.add('show'); }
+  }
+
+  if(dedica3Aud&&typeof DEDICA3_SONG!=='undefined'&&DEDICA3_SONG){
+    dedica3Aud.src=DEDICA3_SONG; fadInAud(dedica3Aud);
+    $('dedica3-btn').textContent='⏸'; $('dedica3-now').textContent='reproduciendo';
+    const disc=$('dedica3-disc'); if(disc) disc.classList.add('spinning');
+  }
+
+  let data=null;
+  try {
+    const cache=JSON.parse(localStorage.getItem('nd-lyrics-dedica')||'{}');
+    if(cache['awm']){ data=cache['awm']; }
+    else {
+      data=await fetchLyrics('Always With Me','Joe Hisaishi');
+      if(!data||!data.length) data=await fetchLyrics('Itsumo Nando Demo','Joe Hisaishi');
+      if(data){ cache['awm']=data; localStorage.setItem('nd-lyrics-dedica',JSON.stringify(cache)); }
+    }
+  } catch(e){}
+
+  if(data&&data.length&&lyricsEl){
+    renderDLyrics(data,lyricsEl,'d3-line');
+    const ref={v:null}; d3Timer=ref;
+    startDSync(dedica3Aud,data,lyricsEl,'d3-line',ref);
+  } else if(lyricsEl){
+    lyricsEl.innerHTML='<span style="color:var(--muted);font-size:.8rem">letra no encontrada</span>';
+  }
+  if(typeof playSparkle==='function') playSparkle();
+}
+function closeDedica3() {
+  const modal=$('dedica3-modal'); if(!modal) return;
+  modal.classList.remove('on'); document.body.style.overflow='';
+  if(dedica3Aud) fadOutAud(dedica3Aud);
+  if(d3Timer){clearInterval(d3Timer.v);d3Timer=null;}
+  const disc=$('dedica3-disc'); if(disc) disc.classList.remove('spinning');
+  $('dedica3-btn').textContent='▶'; $('dedica3-now').textContent='toca ▶ para escuchar';
+}
+function toggleDedica3() {
+  if(!dedica3Aud) return;
+  const disc=$('dedica3-disc'),btn=$('dedica3-btn'),now=$('dedica3-now');
+  if(dedica3Aud.paused){
+    dedica3Aud.play().catch(()=>{});
+    if(disc) disc.classList.add('spinning');
+    if(btn) btn.textContent='⏸'; if(now) now.textContent='reproduciendo';
+    const ref={v:null}; d3Timer=ref;
+    startDSync(dedica3Aud,null,$('dedica3-lyrics'),'d3-line',ref);
+  } else {
+    dedica3Aud.pause();
+    if(disc) disc.classList.remove('spinning');
+    if(btn) btn.textContent='▶'; if(now) now.textContent='pausado';
+    if(d3Timer){clearInterval(d3Timer.v);}
+  }
+}
+
+// ── Botones búsqueda manual de letras ────────────
+async function searchDedica2Lyrics() {
+  const lyricsEl = $('dedica2-lyrics');
+  const track  = ($('d2-track')  && $('d2-track').value.trim())  || 'One More Light';
+  const artist = ($('d2-artist') && $('d2-artist').value.trim()) || 'Linkin Park';
+  if (lyricsEl) lyricsEl.innerHTML = '<span style="color:var(--muted);font-size:.8rem">buscando...</span>';
+  const data = await fetchLyrics(track, artist);
+  if (data && data.length && lyricsEl) {
+    lyricsEl.innerHTML = '';
+    data.forEach(l => {
+      const span = document.createElement('span');
+      span.className = 'd2-line';
+      span.textContent = l[1];
+      span.dataset.t = l[0];
+      lyricsEl.appendChild(span);
+    });
+    try {
+      const cache = JSON.parse(localStorage.getItem('nd-lyrics-dedica') || '{}');
+      cache['oml'] = data;
+      localStorage.setItem('nd-lyrics-dedica', JSON.stringify(cache));
+    } catch(e) {}
+    if (d2Timer) clearInterval(d2Timer.v);
+    const ref = { v: null }; d2Timer = ref;
+    ref.v = setInterval(() => {
+      if (!dedica2Aud || dedica2Aud.paused) return;
+      const ct = dedica2Aud.currentTime;
+      const lines = lyricsEl.querySelectorAll('.d2-line');
+      let cur = -1;
+      lines.forEach((l, i) => { if (ct >= parseFloat(l.dataset.t)) cur = i; });
+      lines.forEach((l, i) => l.classList.toggle('active', i === cur));
+      if (cur >= 0) lines[cur].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }, 250);
+  } else if (lyricsEl) {
+    lyricsEl.innerHTML = '<span style="color:var(--muted);font-size:.8rem">no encontrada, prueba otro nombre 😕</span>';
+  }
+}
+
+async function searchDedica3Lyrics() {
+  const lyricsEl = $('dedica3-lyrics');
+  const track  = ($('d3-track')  && $('d3-track').value.trim())  || 'Itsumo Nando Demo';
+  const artist = ($('d3-artist') && $('d3-artist').value.trim()) || 'Joe Hisaishi';
+  if (lyricsEl) lyricsEl.innerHTML = '<span style="color:var(--muted);font-size:.8rem">buscando...</span>';
+  let data = await fetchLyrics(track, artist);
+  if (!data || !data.length) data = await fetchLyrics('Itsumo Nando Demo', 'Joe Hisaishi');
+  if (!data || !data.length) data = await fetchLyrics('Always With Me', '');
+  if (data && data.length && lyricsEl) {
+    lyricsEl.innerHTML = '';
+    data.forEach(l => {
+      const span = document.createElement('span');
+      span.className = 'd3-line';
+      span.textContent = l[1];
+      span.dataset.t = l[0];
+      lyricsEl.appendChild(span);
+    });
+    try {
+      const cache = JSON.parse(localStorage.getItem('nd-lyrics-dedica') || '{}');
+      cache['awm'] = data;
+      localStorage.setItem('nd-lyrics-dedica', JSON.stringify(cache));
+    } catch(e) {}
+    if (d3Timer) clearInterval(d3Timer.v);
+    const ref = { v: null }; d3Timer = ref;
+    ref.v = setInterval(() => {
+      if (!dedica3Aud || dedica3Aud.paused) return;
+      const ct = dedica3Aud.currentTime;
+      const lines = lyricsEl.querySelectorAll('.d3-line');
+      let cur = -1;
+      lines.forEach((l, i) => { if (ct >= parseFloat(l.dataset.t)) cur = i; });
+      lines.forEach((l, i) => l.classList.toggle('active', i === cur));
+      if (cur >= 0) lines[cur].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }, 250);
+  } else if (lyricsEl) {
+    lyricsEl.innerHTML = '<span style="color:var(--muted);font-size:.8rem">no encontrada, prueba otro nombre 😕</span>';
+  }
+}
+
+// Escape handler
+document.addEventListener('keydown', e => {
+  if(e.key!=='Escape') return;
+  if($('dedica2-modal')?.classList.contains('on')) closeDedica2();
+  if($('dedica3-modal')?.classList.contains('on')) closeDedica3();
+});
+
+// ════════════════════════════════════════════════════
+//   PAULO LONDRA NUEVO — esquina superior derecha
+// ════════════════════════════════════════════════════
+const pauloNewAud = $('paulo-new-aud');
+if (pauloNewAud) pauloNewAud.volume = .85;
+
+// Mostrar fab cuando entre al main
+(function() {
+  const obs = new MutationObserver(() => {
+    const main = $('main');
+    if (main && main.classList.contains('show')) {
+      obs.disconnect();
+      setTimeout(() => {
+        const fab = $('paulo-new-fab');
+        if (fab) fab.classList.add('on');
+      }, 600);
+    }
+  });
+  const main = $('main');
+  if (main) obs.observe(main, { attributes: true, attributeFilter: ['class'] });
+})();
+
+function openPauloNew() {
+  const modal = $('paulo-new-modal'); if (!modal) return;
+
+  // Mensaje
+  const msgEl = $('paulo-new-msg');
+  if (msgEl && typeof BDAY_PAULO_MESSAGE !== 'undefined') {
+    const raw = BDAY_PAULO_MESSAGE.trim();
+    const lines = raw.split('\n').filter(l => l.trim() && !l.trim().startsWith('//'));
+    if (lines.length) { msgEl.textContent = lines.join('\n'); msgEl.classList.add('show'); }
+  }
+
+  // Audio — nombre exacto del archivo
+  const song = typeof BDAY_PAULO_SONG !== 'undefined' && BDAY_PAULO_SONG
+    ? BDAY_PAULO_SONG
+    : 'Paulo Londra me asfixia LA CIUDAD.mp3';
+  if (pauloNewAud && song) {
+    pauloNewAud.src = song;
+    pauloNewAud.volume = 0;
+    pauloNewAud.play().catch(() => {});
+    let v = 0;
+    const fi = setInterval(() => { v = Math.min(v+0.06,.85); pauloNewAud.volume=v; if(v>=.85) clearInterval(fi); }, 80);
+    $('paulo-new-btn').textContent = '⏸';
+    $('paulo-new-status').textContent = 'reproduciendo';
+    const disc = $('paulo-new-disc'); if (disc) disc.classList.add('spinning');
+  }
+
+  modal.classList.add('on');
+  document.body.style.overflow = 'hidden';
+  if (typeof spawnHeartConfetti === 'function') spawnHeartConfetti(15);
+  if (typeof playSparkle === 'function') playSparkle();
+}
+
+function closePauloNew() {
+  const modal = $('paulo-new-modal'); if (!modal) return;
+  modal.classList.remove('on');
+  document.body.style.overflow = '';
+  if (pauloNewAud) {
+    let v = pauloNewAud.volume;
+    const fo = setInterval(() => { v=Math.max(v-0.07,0); pauloNewAud.volume=v; if(v<=0){clearInterval(fo);pauloNewAud.pause();} }, 50);
+  }
+  const disc = $('paulo-new-disc'); if (disc) disc.classList.remove('spinning');
+  $('paulo-new-btn').textContent = '▶';
+  $('paulo-new-status').textContent = 'toca ▶ para escuchar';
+}
+
+function togglePauloNew() {
+  if (!pauloNewAud) return;
+  const disc=$('paulo-new-disc'), btn=$('paulo-new-btn'), status=$('paulo-new-status');
+  if (pauloNewAud.paused) {
+    pauloNewAud.play().catch(() => {});
+    if (disc) disc.classList.add('spinning');
+    if (btn) btn.textContent = '⏸';
+    if (status) status.textContent = 'reproduciendo';
+  } else {
+    pauloNewAud.pause();
+    if (disc) disc.classList.remove('spinning');
+    if (btn) btn.textContent = '▶';
+    if (status) status.textContent = 'pausado';
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('paulo-new-modal')?.classList.contains('on')) closePauloNew();
+});

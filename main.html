@@ -8,14 +8,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Para Ñalñita 🩷</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="birthday.css">
 </head>
 <body>
 
 <!-- PANTALLA DE CARGA -->
 <div id="loader">
   <div class="loader-heart">🩷</div>
-  <div class="loader-text">cargando...</div>
+  <div class="loader-text">abriendo tu galería...</div>
 </div>
 
 <div id="cursor-glow"></div>
@@ -31,47 +30,10 @@
 <div class="orb orb3"></div>
 <div id="toast"></div>
 
-<!-- LOGIN -->
-<div id="login">
-  <div class="login-inner">
-    <div class="login-icon">🩷</div>
-    <h1 class="login-title">Para Ñalñita</h1>
-    <p class="login-sub">¿quién eres?</p>
-    <div class="login-cards">
-      <div class="login-card" onclick="selectRole('guest')">
-        <div class="login-card-emoji">🌸</div>
-        <div class="login-card-name">Soy Ñalñita</div>
-        <div class="login-card-hint">ver galería</div>
-      </div>
-      <div class="login-card" onclick="selectRole('admin')">
-        <div class="login-card-emoji">🔑</div>
-        <div class="login-card-name">Soy el creador</div>
-        <div class="login-card-hint">modo edición</div>
-      </div>
-    </div>
-    <div class="login-pass" id="login-pass">
-      <input type="password" id="login-input" placeholder="contraseña"
-             onkeydown="if(event.key==='Enter') doLogin()">
-      <div class="login-err" id="login-err">contraseña incorrecta 💔</div>
-      <button class="login-btn" onclick="doLogin()">Entrar →</button>
-    </div>
-  </div>
-</div>
-
-<!-- BIENVENIDA -->
-<div id="welcome">
-  <div class="welcome-hearts" id="welcome-hearts"></div>
-  <div class="welcome-inner">
-    <div class="w-eyebrow">✦ especialmente para ti ✦</div>
-    <div class="w-hermana">Para Mi Hermana</div>
-    <h1 class="w-name" id="w-name">Ñalñita</h1>
-    <p class="w-tag">esto lo hice pensando en ti 🩷</p>
-    <div class="w-emojis">
-      <span>🩷</span><span>✨</span><span>🌸</span><span>⭐</span>
-      <span>🎵</span><span>🌸</span><span>✨</span><span>🩷</span>
-    </div>
-    <button class="w-btn" onclick="enterMain()">Entrar ✨</button>
-  </div>
+<!-- INDICADOR CLIMA -->
+<div id="weather-badge" style="display:none">
+  <span id="weather-icon">🌤</span>
+  <span id="weather-temp"></span>
 </div>
 
 <!-- PRINCIPAL -->
@@ -84,6 +46,8 @@
       <span class="title-deco">🌸</span>
     </div>
     <p class="subtitle">🎵 toca un personaje para escuchar 🎵</p>
+
+    <!-- Contador de amistad -->
     <div class="friendship-counter">
       <span class="fc-label">💕 nuestra amistad <button class="fc-evidence" onclick="openFechaEvidencia()" title="ver foto">📸</button></span>
       <div class="fc-grid">
@@ -93,6 +57,8 @@
         <div class="fc-item"><span class="fc-num" id="fc-secs">0</span><span class="fc-unit">seg</span></div>
       </div>
     </div>
+
+    <!-- Cuenta regresiva fecha especial -->
     <div class="countdown" id="countdown">
       <span class="cd-label" id="cd-label">⏳ faltan para tu día</span>
       <div class="cd-grid">
@@ -119,6 +85,7 @@
   <button id="p-prev" class="p-nav" onclick="prevSong()" title="Anterior">⏮</button>
   <button id="p-btn" onclick="togglePlay()">⏸</button>
   <button id="p-next" class="p-nav" onclick="nextSong()" title="Siguiente">⏭</button>
+  <button id="p-list" class="p-nav" onclick="openPlaylist()" title="Lista de canciones">🎵</button>
   <div class="player-progress" id="player-progress"></div>
 </div>
 
@@ -138,161 +105,7 @@
 <button id="globos-fab" onclick="openGlobos()" title="Globos sorpresa">🎈</button>
 <button id="frasco-fab" onclick="openFrasco()" title="Frasco de cumplidos">🫙</button>
 <button id="surprise-fab" onclick="surpriseMe()" title="Sorpréndeme">🎲</button>
-
-<!-- PLAYLIST FAB — al lado de la carta -->
-<div id="playlist-fab-card" onclick="openPlaylist()">
-  <div class="pl-fab-glow"></div>
-  <div class="pl-fab-content">
-    <div class="pl-fab-note">🎵 tus canciones</div>
-    <div class="pl-fab-title">Playlist</div>
-    <div class="pl-fab-sub">Todas · Favoritas · Mi Lista</div>
-  </div>
-  <div class="pl-fab-btn">▶</div>
-</div>
-
-<!-- PAULO LONDRA — esquina superior derecha -->
-<div id="paulo-new-fab" onclick="openPauloNew()">
-  <img src="Paulo Nuevo.jpg" id="paulo-new-img" onerror="this.style.display='none'">
-  <div class="paulo-new-content">
-    <div class="paulo-new-note">👑 nuevo</div>
-    <div class="paulo-new-song">La Ciudad Me Asfixia</div>
-    <div class="paulo-new-artist">Paulo Londra</div>
-  </div>
-  <div class="paulo-new-play">▶</div>
-</div>
-
-<!-- MODAL Paulo Londra nuevo -->
-<div id="paulo-new-modal" class="modal">
-  <div class="modal-back" onclick="closePauloNew()"></div>
-  <div class="modal-box paulo-new-box">
-    <button class="modal-x" onclick="closePauloNew()">✕</button>
-    <div class="paulo-new-hdr">
-      <div class="paulo-new-hdr-bg" style="background-image:url('Paulo Nuevo.jpg')"></div>
-      <div class="paulo-new-hdr-overlay"></div>
-      <div class="paulo-new-hdr-inner">
-        <div class="paulo-new-badge">👑 Paulo Londra</div>
-        <div class="paulo-new-title">La Ciudad Me Asfixia</div>
-        <div class="paulo-new-sub">una canción para ti 🩷</div>
-      </div>
-    </div>
-    <div class="paulo-new-body">
-      <div class="paulo-new-player-wrap">
-        <div class="paulo-new-disc" id="paulo-new-disc">👑</div>
-        <div class="paulo-new-info">
-          <div class="paulo-new-sname">La Ciudad Me Asfixia</div>
-          <div class="paulo-new-status" id="paulo-new-status">toca ▶ para escuchar</div>
-        </div>
-        <button class="paulo-new-btn" id="paulo-new-btn" onclick="togglePauloNew()">▶</button>
-      </div>
-      <div class="paulo-new-msg" id="paulo-new-msg"></div>
-    </div>
-  </div>
-</div>
-<audio id="paulo-new-aud"></audio>
-
-<!-- CARTA DERECHA 1: One More Light -->
-<div id="dedica2-fab" onclick="openDedica2()">
-  <img src="One More Light.jpg" id="dedica2-fab-img" onerror="this.style.display='none'">
-  <div class="dedica2-fab-content">
-    <div class="dedica2-fab-note">💜 para ti</div>
-    <div class="dedica2-fab-song">One More Light</div>
-    <div class="dedica2-fab-artist">Linkin Park</div>
-  </div>
-  <div class="dedica2-fab-play">▶</div>
-</div>
-
-<!-- MODAL One More Light -->
-<div id="dedica2-modal" class="modal">
-  <div class="modal-back" onclick="closeDedica2()"></div>
-  <div class="modal-box dedica2-box">
-    <button class="modal-x" onclick="closeDedica2()">✕</button>
-    <div class="dedica2-hdr">
-      <div class="dedica2-hdr-bg" id="dedica2-hdr-bg" style="background-image:url('One More Light.jpg')"></div>
-      <div class="dedica2-hdr-overlay"></div>
-      <div class="dedica2-hdr-inner">
-        <div class="dedica2-note-badge">💜 especialmente para ti</div>
-        <div class="dedica2-title">One More Light</div>
-        <div class="dedica2-artist-txt">Linkin Park</div>
-      </div>
-    </div>
-    <div class="dedica2-body">
-      <div class="dedica2-player">
-        <div class="dedica2-disc" id="dedica2-disc">💜</div>
-        <div class="dedica2-info">
-          <div class="dedica2-song-name">One More Light</div>
-          <div class="dedica2-now" id="dedica2-now">toca ▶ para escuchar</div>
-        </div>
-        <button class="dedica2-btn" id="dedica2-btn" onclick="toggleDedica2()">▶</button>
-      </div>
-      <div class="dedica2-lyrics-wrap">
-        <div class="dedica2-lyrics-label">🎤 letra</div>
-        <div class="dedica-search-row">
-          <input class="dedica-search-input" id="d2-track" placeholder="canción" value="One More Light">
-          <input class="dedica-search-input" id="d2-artist" placeholder="artista" value="Linkin Park">
-          <button class="dedica-search-btn" onclick="searchDedica2Lyrics()">🔍</button>
-        </div>
-        <div class="dedica2-lyrics" id="dedica2-lyrics"></div>
-      </div>
-      <div class="dedica2-why" id="dedica2-why">
-        <div class="dedica2-why-icon">⭐</div>
-        <div class="dedica2-why-title">¿Por qué esta canción?</div>
-        <div class="dedica2-why-text" id="dedica2-why-text"></div>
-      </div>
-      <div class="dedica2-carta" id="dedica2-carta"></div>
-    </div>
-  </div>
-</div>
-
-<!-- CARTA DERECHA 2: Always With Me -->
-<div id="dedica3-fab" onclick="openDedica3()">
-  <img src="Always With Me.jpg" id="dedica3-fab-img" onerror="this.style.display='none'">
-  <div class="dedica3-fab-content">
-    <div class="dedica3-fab-note">🌸 para ti</div>
-    <div class="dedica3-fab-song">Always With Me</div>
-    <div class="dedica3-fab-artist">El viaje de Chihiro</div>
-  </div>
-  <div class="dedica3-fab-play">▶</div>
-</div>
-
-<!-- MODAL Always With Me -->
-<div id="dedica3-modal" class="modal">
-  <div class="modal-back" onclick="closeDedica3()"></div>
-  <div class="modal-box dedica3-box">
-    <button class="modal-x" onclick="closeDedica3()">✕</button>
-    <div class="dedica3-hdr">
-      <div class="dedica3-hdr-bg" id="dedica3-hdr-bg" style="background-image:url('Always With Me.jpg')"></div>
-      <div class="dedica3-hdr-overlay"></div>
-      <div class="dedica3-hdr-inner">
-        <div class="dedica3-note-badge">🌸 especialmente para ti</div>
-        <div class="dedica3-title">Always With Me</div>
-        <div class="dedica3-artist-txt">El viaje de Chihiro — Joe Hisaishi</div>
-      </div>
-    </div>
-    <div class="dedica3-body">
-      <div class="dedica3-player">
-        <div class="dedica3-disc" id="dedica3-disc">🌸</div>
-        <div class="dedica3-info">
-          <div class="dedica3-song-name">Always With Me</div>
-          <div class="dedica3-now" id="dedica3-now">toca ▶ para escuchar</div>
-        </div>
-        <button class="dedica3-btn" id="dedica3-btn" onclick="toggleDedica3()">▶</button>
-      </div>
-      <div class="dedica3-lyrics-wrap">
-        <div class="dedica3-lyrics-label">🌸 letra</div>
-        <div class="dedica-search-row">
-          <input class="dedica-search-input" id="d3-track" placeholder="canción" value="Always With Me">
-          <input class="dedica-search-input" id="d3-artist" placeholder="artista" value="Joe Hisaishi">
-          <button class="dedica-search-btn dedica-search-btn3" onclick="searchDedica3Lyrics()">🔍</button>
-        </div>
-        <div class="dedica3-lyrics" id="dedica3-lyrics"></div>
-      </div>
-      <div class="dedica3-carta" id="dedica3-carta"></div>
-    </div>
-  </div>
-</div>
-
-<audio id="dedica2-aud"></audio>
-<audio id="dedica3-aud"></audio>
+<button id="timeline-fab" onclick="openTimeline()" title="Línea del tiempo">🗓️</button>
 
 <div id="dedica-fab" onclick="openDedica()">
   <img src="Val.png" id="dedica-fab-img" onerror="this.style.display='none'">
@@ -444,6 +257,28 @@
   </div>
 </div>
 
+<!-- ZOOM OVERLAY para fotos del libro -->
+<div id="zoom-overlay" onclick="closeZoom()">
+  <img id="zoom-img" alt="">
+  <button id="zoom-close" onclick="closeZoom()">✕</button>
+</div>
+
+<!-- MODAL LÍNEA DEL TIEMPO -->
+<div id="timeline-modal" class="modal">
+  <div class="modal-back" onclick="closeTimeline()"></div>
+  <div class="modal-box timeline-box">
+    <button class="modal-x" onclick="closeTimeline()">✕</button>
+    <div class="timeline-hdr">
+      <span class="timeline-icon">🗓️</span>
+      <div>
+        <div class="timeline-title">Nuestra historia</div>
+        <div class="timeline-sub">momentos guardados en el tiempo 🌸</div>
+      </div>
+    </div>
+    <div class="timeline-body" id="timeline-body"></div>
+  </div>
+</div>
+
 <!-- MODAL MINI-JUEGO MEMORAMA -->
 <div id="game-modal" class="modal">
   <div class="modal-back" onclick="closeGame()"></div>
@@ -578,11 +413,8 @@
   </div>
 </div>
 
-<!-- BOTÓN FINAL -->
+<!-- BOTÓN FINAL (cierre del regalo) -->
 <button id="final-fab" onclick="openFinal()" title="Para terminar...">🩷</button>
-
-
-<!-- MODAL CARTA FINAL -->
 
 <!-- MODAL CARTA FINAL -->
 <div id="final-modal" class="modal">
@@ -620,6 +452,5 @@
 
 <script src="data.js"></script>
 <script src="app.js"></script>
-<script src="birthday.js"></script>
 </body>
 </html>
