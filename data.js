@@ -20,7 +20,7 @@ const DEDICA2_MESSAGE = `
 // ─────────────────────────────────────────────────────
 //  CANCIÓN ESPECIAL 2 — Always With Me
 // ─────────────────────────────────────────────────────
-const DEDICA3_SONG    = "Always With Me.mp3";
+const DEDICA3_SONG    = "Always with Me.mp3";
 const DEDICA3_MESSAGE = `
 // escribe aquí tu mensaje para esta canción
 `;
